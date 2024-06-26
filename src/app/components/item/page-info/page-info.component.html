@@ -1,0 +1,22 @@
+<div mat-dialog-content style="font-size: large; font-family: 'Times New Roman', Times, serif">
+    <table>
+        <tr>
+            <td>Author: </td>
+            <td>{{data.author}}</td>
+        </tr>
+        <tr>
+            <td>Created on: </td>
+            <td>{{data.createdDate | date}}</td>
+        </tr>
+        <tr>
+            <td>Last updated on:&ensp;</td>
+            <td>{{data.lastUpdatedOn | date}}</td>
+        </tr>
+    </table>
+</div>
+<hr>
+<div mat-dialog-actions style="display: flex;
+align-items: center;
+justify-content: center;">
+    <button (click)="this.dialogRef.close();" color="warn" mat-raised-button>Close</button>
+</div>

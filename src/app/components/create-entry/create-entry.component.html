@@ -1,0 +1,136 @@
+<div class="parentcontainer">
+    <mat-card class="mat-elevation-z8">
+        <mat-card-title style="font-size: xx-large; text-align: center; border: 1px black solid; background-color: goldenrod; padding: 10px; border-radius: 10px;">Create Page</mat-card-title>
+        <br>
+
+        <form [formGroup]="createEntryForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()"
+            (keydown.shift.enter)="$event.preventDefault()" (keydown.control.enter)="$event.preventDefault()"
+            (keydown.alt.enter)="$event.preventDefault()">
+
+            <!-- Page Heading -->
+            <mat-card-content>
+                <!-- Input for Title -->
+                <mat-form-field appearance="outline" style="width: 100%;">
+                    <mat-label>Enter Page Heading</mat-label>
+                    <input type="text" matInput formControlName="title" placeholder="Ex. Helmke Library">
+                </mat-form-field>
+            </mat-card-content>
+
+            <!-- Page Content -->
+            <mat-card-content>
+                <!-- Input for Rich Tex Box -->
+
+                <!-- Commented due to bugs -->
+                <!-- <angular-editor [config]="editorConfig" ></angular-editor> -->
+
+                <ngx-editor-menu *ngIf="getScreenWidth >= 650" [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+                <ngx-editor [editor]="editor" formControlName="richTextDescription"></ngx-editor>
+
+                <ngx-editor *ngIf="getScreenWidth < 650" [editor]="editor" formControlName="richTextDescription">
+                    <ngx-editor-floating-menu [editor]="editor">
+                        <ngx-editor-menu [editor]="editor"></ngx-editor-menu>
+                    </ngx-editor-floating-menu>
+                </ngx-editor>
+
+                <!-- Work in progress -->
+                <!-- <ckeditor [editor]="Editor" data="<p>Hello, world!</p>"></ckeditor> -->
+            </mat-card-content>
+
+            <!-- Categories -->
+            <mat-card-subtitle></mat-card-subtitle>
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Select Category</mat-label>
+                <input type="text" placeholder="buildings" matInput formControlName="category" [matAutocomplete]="auto"
+                    (keydown.enter)="addCategory()">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                    (optionSelected)='onCategoryOptionSelected($event.option.value)'>
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        <div [ngStyle]="{ 'background-color': GetColor(option) }"
+                            style="height: 16px; width: 16px; display: inline-block; border: 1px black solid;">
+                        </div>&nbsp;&nbsp;
+                        <span>{{ option }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <div *ngIf="selectedCategories.length > 0">
+                <mat-chip-list>
+                    <mat-chip *ngFor="let category of selectedCategories; index as i" (removed)="remove(category)"
+                        [ngStyle]="{ 'background-color': category.color}" class="custom-chip">
+                        <input type="color" attr.id="color-picker-{{i}}"
+                            style="opacity: 0; visibility: hidden; position: absolute;"
+                            (change)="onCategoryColorSelection($event, i)" [value]="category.color">
+                        <label attr.for="color-picker-{{i}}">{{category.name}}</label>
+                        <button matChipRemove>
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </mat-chip>
+                </mat-chip-list>
+            </div>
+            <br>
+
+            <!-- Upload Files -->
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Upload Files</mat-label>
+                <ngx-mat-file-input #uploadFileInput (change)="handleFileInput($event)"
+                    [accept]="'.pdf,.docx,.txt,.xlsx,.csv,.pptx,.png,.jpg,.doc,.mp3,.mp4,.mov,.flv,.mkv,.avi,.wmv,.webm'">
+                </ngx-mat-file-input>
+                <mat-icon matSuffix>folder</mat-icon>
+                <mat-error *ngIf="createEntryForm.hasError('required')">
+                    Please enter a valid file type
+                </mat-error>
+            </mat-form-field>
+            <br>
+            <br>
+            
+            <table *ngIf="fileList.length>0" mat-table [dataSource]="matDataSource" class="mat-elevation-z2"
+                style="width: 100%;">
+
+                <!--- Note that these columns can be defined in any order.
+                          The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Name </th>
+                    <td mat-cell *matCellDef="let element"> {{element.file.name}} </td>
+                </ng-container>
+
+                <!-- Size Column -->
+                <ng-container matColumnDef="size">
+                    <th mat-header-cell *matHeaderCellDef> Size </th>
+                    <td mat-cell *matCellDef="let element"> {{element.file.size/(1024) | number: '1.1-1'}} KB</td>
+                </ng-container>
+
+                <!-- Type Column -->
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Type </th>
+                    <td mat-cell *matCellDef="let element"> {{element.file.type}} </td>
+                </ng-container>
+
+                <!-- Remove Column -->
+                <ng-container matColumnDef="remove">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element"> <button *ngIf="!submitButtonPressed" type='button'
+                            mat-icon-button aria-label="remove" (click)="onRemoveClick(element.file.name)">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                        <mat-progress-bar *ngIf="submitButtonPressed" mode="determinate"
+                            [value]="getProgressValue(element.file.name)"></mat-progress-bar>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <br>
+            <hr>
+            <!-- Submit button -->
+            <div style="text-align: center;" >
+            <button mat-raised-button color="primary" type="submit"
+                [disabled]="!createEntryForm.valid || submitButtonPressed"
+                [class.spinner]="submitButtonPressed">Submit</button>
+            </div>
+        </form>
+    </mat-card>
+    <br>
+</div>

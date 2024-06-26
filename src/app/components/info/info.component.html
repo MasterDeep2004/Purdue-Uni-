@@ -1,0 +1,278 @@
+<div *ngIf="getScreenWidth >= 650" class="container">
+    <mat-card class="mat-elevation-z8">
+        <mat-card-title>
+            We'd love your feedback!
+        </mat-card-title>
+        <hr>
+        <mat-card-content style="padding-left: 25px;padding-right: 25px;">
+            <mat-form-field appearance="outline" style="width: 17%;">
+                <mat-label>I am a PFW student, staff, or faculty</mat-label>
+                <mat-select (selectionChange)="onUserTypeSelection($event)" required>
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br>
+            <mat-form-field appearance="outline" style="width: 20%;">
+                <mat-label>Enter your name</mat-label>
+                <input matInput placeholder="John Smith" [formControl]="name" required>
+                <mat-error *ngIf="email.invalid">{{getNameErrorMessage()}}</mat-error>
+            </mat-form-field>
+            &nbsp;
+            <mat-form-field appearance="outline" style="width: 20%;">
+                <mat-label>Enter your email address</mat-label>
+                <input area matInput placeholder="john.smith@example.com" [formControl]="email" required>
+                <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <br>
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Enter your feedback</mat-label>
+                <textarea matInput rows="10"
+                    [formControl]="suggestion"></textarea>
+            </mat-form-field>
+
+            <div style="width: 100%; text-align: center;">
+                <button mat-raised-button color="warn" matTooltip="Send feedback" (click)="sendEmail()"
+                    [disabled]="getSubmitButtonStatus()" [class.spinner]="submitButtonPressed">Submit</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <br>
+    <mat-card class="mat-elevation-z8">
+        <h2>FAQs</h2>
+        <hr>
+        <mat-expansion-panel style="margin-bottom: 10px; background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; What should I do if I am unable to create new
+                    entry?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ul>
+                <li>Open Internet Explorer</li>
+                <li>Go to internet options</li>
+                <li>Go to security tab</li>
+                <li>Select trusted sites</li>
+                <li>Click on sites button</li>
+                <li>Add the website 'https://tools.library.pfw.edu/encyclopedia'</li>
+                <li>Close the trusted sites window</li>
+                <li>Select local intranet tab</li>
+                <li>Select custom level button</li>
+                <li>Scroll to the bottom and under UserAuthenticaion -> Logon choose 'Prompt for user name and password'
+                </li>
+                <li>Select Ok</li>
+                <li>Apply these settings</li>
+                <li>Refresh the create entry page</li>
+            </ul>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Why can't I login?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>The login is meant for <strong>PFW library administrators</strong>. If you want to contribute to the
+                pages, please comment on the page and it will get addressed by the admin.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; What type of files can I upload?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Currently the following file types are allowed to be uploaded : </p>
+            <ul>
+                <li>Documents (.pdf)</li>
+                <li>Word Documents (.docx or .doc)</li>
+                <li>Sheets (.xlsx or .csv)</li>
+                <li>Powerpoint (.pptx)</li>
+                <li>Text (.txt)</li>
+                <li>Images (.png or .jpg)</li>
+                <li>Audio (.mp3)</li>
+                <li>Video (.mp4 or .mov or .flv or .mkv or .avi or .wmv or .webm)</li>
+            </ul>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Why can't I upload images directly when
+                    creating a page?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Uploading images directly converts the image into a text-like 'object', which is too large to save into a
+                database. Hence if you try to do that, it will fail or break the system.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; How do I attach tables to a page?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Tables are <strong>not</strong> currently supported by the rich text editor. To add a table, it's
+                recommended to create a excel spreadsheet and upload it as an attachment.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Why can't I upload a large file?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Curently the size limit for uploading a file is <strong>25 MB</strong>.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title style="font-size: larger;">
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Do I need to login to comment or submit
+                    feedback?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p><strong>Yes</strong></p>
+        </mat-expansion-panel>
+    </mat-card>
+    <br>
+</div>
+
+<div *ngIf="getScreenWidth < 650" class="container">
+    <mat-card class="mat-elevation-z8">
+        <mat-card-title>
+            We'd love your feedback!
+        </mat-card-title>
+        <hr>
+        <mat-card-content>
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>I am a PFW student, staff, or faculty</mat-label>
+                <mat-select (selectionChange)="onUserTypeSelection($event)" required>
+                    <mat-option value="Yes">Yes</mat-option>
+                    <mat-option value="No">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <br>
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Enter your name</mat-label>
+                <input matInput placeholder="John Smith" [formControl]="name" required>
+                <mat-error *ngIf="email.invalid">{{getNameErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Enter your email address</mat-label>
+                <input area matInput placeholder="john.smith@example.com" [formControl]="email" required>
+                <mat-error *ngIf="email.invalid">{{getEmailErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <br>
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Enter your feedback</mat-label>
+                <textarea matInput rows="10"
+                    [formControl]="suggestion"></textarea>
+            </mat-form-field>
+
+            <div style="width: 100%; text-align: center;">
+                <button mat-raised-button color="warn" matTooltip="Send feedback" (click)="sendEmail()"
+                    [disabled]="getSubmitButtonStatus()" [class.spinner]="submitButtonPressed">Submit</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    <br>
+    <mat-card class="mat-elevation-z8">
+        <h2>FAQs</h2>
+        <hr>
+        <mat-expansion-panel style="margin-bottom: 10px; background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; What should I do if I am unable to create new
+                    entry?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ul>
+                <li>Open Internet Explorer</li>
+                <li>Go to internet options</li>
+                <li>Go to security tab</li>
+                <li>Select trusted sites</li>
+                <li>Click on sites button</li>
+                <li>Add the website 'https://tools.library.pfw.edu/encyclopedia'</li>
+                <li>Close the trusted sites window</li>
+                <li>Select local intranet tab</li>
+                <li>Select custom level button</li>
+                <li>Scroll to the bottom and under UserAuthenticaion -> Logon choose 'Prompt for user name and password'
+                </li>
+                <li>Select Ok</li>
+                <li>Apply these settings</li>
+                <li>Refresh the create entry page</li>
+            </ul>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Why can't I login?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>The login is meant for <strong>PFW library administrators</strong>. If you want to contribute to the
+                pages, please comment on the page and it will get addressed by the admin.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; What type of files can I upload?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Currently the following file types are allowed to be uploaded : </p>
+            <ul>
+                <li>Documents (.pdf)</li>
+                <li>Word Documents (.docx or .doc)</li>
+                <li>Sheets (.xlsx or .csv)</li>
+                <li>Powerpoint (.pptx)</li>
+                <li>Text (.txt)</li>
+                <li>Images (.png or .jpg)</li>
+                <li>Audio (.mp3)</li>
+                <li>Video (.mp4 or .mov or .flv or .mkv or .avi or .wmv or .webm)</li>
+            </ul>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Why can't I upload images directly when
+                    creating a page?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Uploading images directly converts the image into a text-like 'object', which is too large to save into a
+                database. Hence if you try to do that, it will fail or break the system.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; How do I attach tables to a page?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Tables are <strong>not</strong> currently supported by the rich text editor. To add a table, it's
+                recommended to create a excel spreadsheet and upload it as an attachment.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Why can't I upload a large file?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Curently the size limit for uploading a file is <strong>25 MB</strong>.</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel style="margin-bottom: 10px;background-color: antiquewhite;">
+            <mat-expansion-panel-header>
+                <mat-panel-title >
+                    <mat-icon>keyboard_arrow_right</mat-icon>&nbsp;&nbsp; Do I need to login to comment or submit
+                    feedback?
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p><strong>Yes</strong></p>
+        </mat-expansion-panel>
+    </mat-card>
+    <br>
+</div>

@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>Edit Categories</h1>
+<div mat-dialog-content>
+    <form [formGroup]="formGroup" (keydown.enter)="$event.preventDefault()"
+        (keydown.shift.enter)="$event.preventDefault()" (keydown.control.enter)="$event.preventDefault()"
+        (keydown.alt.enter)="$event.preventDefault()">
+        <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Category</mat-label>
+            <input type="text" placeholder="buildings" matInput formControlName="category" [matAutocomplete]="auto"
+                (keydown.enter)="addCategory()">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                (optionSelected)='onCategoryOptionSelected($event.option.value)'>
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    <div [ngStyle]="{ 'background-color': GetColor(option) }"
+                        style="height: 16px; width: 16px; display: inline-block; border: 1px black solid;">
+                    </div>&nbsp;&nbsp;
+                    <span>{{ option }}</span>
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <div *ngIf="selectedCategories.length > 0">
+            <mat-chip-list>
+                <mat-chip *ngFor="let category of selectedCategories; index as i" (removed)="remove(category)"
+                    [ngStyle]="{ 'background-color': category.color }" class="custom-chip">
+                    <input type="color" attr.id="color-picker-{{i}}"
+                        style="opacity: 0; visibility: hidden; position: absolute;"
+                        (change)="onCategoryColorSelection($event, i)" [value]="category.color">
+                    <label attr.for="color-picker-{{i}}">{{category.name}}</label>
+                    <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions style="display: flex;
+align-items: center;
+justify-content: center;">
+    <button [mat-dialog-close]="selectedCategories" cdkFocusInitial color="warn" mat-raised-button>Ok</button>
+</div>

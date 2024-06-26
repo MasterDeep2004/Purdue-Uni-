@@ -1,0 +1,115 @@
+<!-- Desktop Toolbar -->
+<div *ngIf="getScreenWidth >= 850">
+  <mat-toolbar class="main-navbar" color="primary">
+    <img alt="Encyclopedia" src="../assets/logos/library-logo-header-LibGuides-2020.png" class="pfw-logo"
+      (click)="goToUrl()" matTooltip="Go to Helmke Library" />
+    <div style=" flex: 1 1 70%; text-align: center;">
+      <button mat-button style="font-size: xx-large; font-family: acumin-pro, sans-serif;" [routerLink]="['']"
+        matTooltip="Home"><span style="color: white; margin: 0px; padding: 0px;">PFW&nbsp;</span><span
+          style="color: rgba(147,126,59,255); margin: 0px; padding: 0px;">Encyclopedia</span></button>
+    </div>
+    <span class="example-spacer"></span>
+    <button mat-icon-button [routerLink]="['/search']" matTooltip="Search records">
+      <mat-icon>search</mat-icon>
+    </button>
+    <button mat-icon-button [routerLink]="['/alphabet']" matTooltip="A-Z records">
+      <mat-icon>sort_by_alpha</mat-icon>
+    </button>
+    <button mat-icon-button [routerLink]="['/category']" matTooltip="Show records based on category">
+      <mat-icon>library_books</mat-icon>
+    </button>
+    <button mat-icon-button [routerLink]="['/recommended-search']" matTooltip="Recommended searches">
+      <mat-icon>stars</mat-icon>
+    </button>
+    <button mat-icon-button [routerLink]="['/info']" matTooltip="Help">
+      <mat-icon>info</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Settings (Preview)" [matMenuTriggerFor]="settingsMenu">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <mat-menu #settingsMenu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="toggleViewMenu">
+        <span>Themes</span>
+      </button>
+    </mat-menu>
+    <mat-menu #toggleViewMenu="matMenu">
+      <button mat-menu-item (click)="onToggleView('table')">
+        <mat-icon>table_chart</mat-icon>
+        <span>Table&nbsp;&nbsp;&nbsp;</span>
+        <mat-icon *ngIf="currentView == 'table'">checked</mat-icon>
+      </button>
+      <button mat-menu-item (click)="onToggleView('list')">
+        <mat-icon>list</mat-icon>
+        <span>List&nbsp;&nbsp;&nbsp;</span>
+        <mat-icon *ngIf="currentView == 'list'">checked</mat-icon>
+      </button>
+      <button mat-menu-item (click)="onToggleView('card')">
+        <mat-icon>dashboard</mat-icon>
+        <span>Card&nbsp;&nbsp;&nbsp;</span>
+        <mat-icon *ngIf="currentView == 'card'">checked</mat-icon>
+      </button>
+    </mat-menu>
+    <mat-menu #toggleThemeMenu="matMenu">
+      <button mat-menu-item>
+        <span>Default</span>
+      </button>
+    </mat-menu>
+    <button *ngIf="isLoggedInUserAdmin" mat-icon-button [routerLink]="['/login-landing']" matTooltip="Administrator">
+      <mat-icon>supervisor_account</mat-icon>
+    </button>
+    <asl-google-signin-button *ngIf="!loggedIn" type='icon' size='medium' shape='circle' theme='filled_blue'
+      matTooltip="Sign in with Google"></asl-google-signin-button>
+    <button mat-icon-button *ngIf="loggedIn" (click)="signOut()" style="color: goldenrod;">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+  <ng-scrollbar class="scrollbar">
+    <router-outlet></router-outlet>
+  </ng-scrollbar>
+</div>
+
+<!-- Mobile Toolbar -->
+<div *ngIf="getScreenWidth < 850">
+  <mat-toolbar class="main-navbar" color="primary">
+    <button mat-icon-button style="color: white;" [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [routerLink]="['/search']">
+        <mat-icon>search</mat-icon>
+        <span>Search Records</span>
+      </button>
+      <button mat-menu-item [routerLink]="['/alphabet']">
+        <mat-icon>sort_by_alpha</mat-icon>
+        <span>A-Z records</span>
+      </button>
+      <button mat-menu-item [routerLink]="['/category']">
+        <mat-icon>library_books</mat-icon>
+        <span>Records by category</span>
+      </button>
+      <button mat-menu-item [routerLink]="['/recommended-search']">
+        <mat-icon>stars</mat-icon>
+        <span>Recommended searches</span>
+      </button>
+      <button mat-menu-item [routerLink]="['/info']">
+        <mat-icon>info</mat-icon>
+        <span>Help</span>
+      </button>
+      <asl-google-signin-button mat-menu-item *ngIf="!loggedIn" type='standard' size='large'
+        matTooltip="Sign in with Google"></asl-google-signin-button>
+      <button mat-menu-item *ngIf="loggedIn" (click)="signOut()" style="color: goldenrod;">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+
+    <div style=" flex: 1 1 70%; text-align: center;">
+      <button mat-button style="font-size: x-large; font-family: acumin-pro, sans-serif;" [routerLink]="['']"
+        matTooltip="Home"><span style="color: white; margin: 0px; padding: 0px;">PFW&nbsp;</span><span
+          style="color: rgba(147,126,59,255); margin: 0px; padding: 0px;">Encyclopedia</span></button>
+    </div>
+  </mat-toolbar>
+
+  <router-outlet></router-outlet>
+</div>

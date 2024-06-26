@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Add new Admin?</h1>
+<div>
+    <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="email">
+    </mat-form-field>
+    <!-- <asl-google-signin-button type='standard' size='large'></asl-google-signin-button> -->
+</div>
+<div mat-dialog-actions align="center">
+    <button mat-button cdkFocusInitial (click)="onAddButtonClick()" [disabled]="!email">Add</button>
+</div>

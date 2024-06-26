@@ -1,0 +1,123 @@
+<div *ngIf="getScreenWidth >= 675" class="container">
+    <mat-card class="mat-elevation-z8" style="padding: 16px;">
+        <angular-tag-cloud #tagCloud [config]="options" [data]="data" [zoomOnHover]="zoomOnHoverOptions"
+            (clicked)="searchClicked($event)" style="cursor: pointer;"></angular-tag-cloud>
+
+        <hr>
+        <mat-card style="height: 600px;
+        max-width: 100%;
+        overflow: auto;">
+            <mat-card *ngIf="loading; else table" class="mat-elevation-z8" style="height: 556px; ">
+                <mat-progress-spinner color="primary" mode="indeterminate"
+                    style="position: relative; left: 45%; top: 25%;">
+                </mat-progress-spinner>
+            </mat-card>
+        </mat-card>
+
+        <ng-template #table>
+            <table mat-table [dataSource]="matDataSource" class="mat-elevation-z8"
+                *ngIf="matDataSource.data.length !== 0; else noData">
+
+                <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- title Column -->
+                <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef> Title </th>
+                    <td mat-cell *matCellDef="let element" [innerHTML]="highlight(element.title)"></td>
+                </ng-container>
+
+                <!-- preview Column -->
+                <ng-container matColumnDef="preview">
+                    <th mat-header-cell *matHeaderCellDef> Preview </th>
+                    <td mat-cell *matCellDef="let element" [innerHTML]="highlight(element.preview)"></td>
+                </ng-container>
+
+                <!-- category Goto -->
+                <ng-container matColumnDef="goto">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element">
+                        <button matSuffix mat-icon-button aria-label="Goto" [routerLink]="['/',element.id]">
+                            <mat-icon>double_arrow</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </ng-template>
+
+        <mat-paginator [pageSizeOptions]="[10, 50, 100]" showFirstLastButtons (page)="pageChanged($event)">
+        </mat-paginator>
+
+        <ng-template #noData>
+            <mat-card class="mat-elevation-z8">
+                No data found!
+            </mat-card>
+        </ng-template>
+    </mat-card>
+    <br>
+</div>
+
+<div *ngIf="getScreenWidth < 675" class="container">
+    <mat-card class="mat-elevation-z8" style="padding: 16px;">
+        <angular-tag-cloud #tagCloud [config]="options" [data]="data" [zoomOnHover]="zoomOnHoverOptions"
+            (clicked)="searchClicked($event)" style="cursor: pointer;"></angular-tag-cloud>
+
+        <hr>
+        <mat-card style="height: 600px;
+        max-width: 100%;
+        overflow: auto;">
+            <mat-card *ngIf="loading; else table" class="mat-elevation-z8" style="height: 556px; ">
+                <mat-progress-spinner color="primary" mode="indeterminate"
+                    style="position: relative; left: 45%; top: 25%;">
+                </mat-progress-spinner>
+            </mat-card>
+        </mat-card>
+
+        <ng-template #table>
+            <table mat-table [dataSource]="matDataSource" class="mat-elevation-z8"
+                *ngIf="matDataSource.data.length !== 0; else noData">
+
+                <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- title Column -->
+                <ng-container matColumnDef="titlemob">
+                    <th mat-header-cell *matHeaderCellDef> Title </th>
+                    <td mat-cell *matCellDef="let element" [innerHTML]="highlight(element.title)"></td>
+                </ng-container>
+
+                <!-- preview Column -->
+                <ng-container matColumnDef="previewmob">
+                    <th mat-header-cell *matHeaderCellDef> Preview </th>
+                    <td mat-cell *matCellDef="let element" [innerHTML]="highlight(element.preview)"></td>
+                </ng-container>
+
+                <!-- category Goto -->
+                <ng-container matColumnDef="gotomob">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element">
+                        <button matSuffix mat-icon-button aria-label="Goto" [routerLink]="['/',element.id]">
+                            <mat-icon>double_arrow</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </ng-template>
+
+        <mat-paginator [pageSizeOptions]="[10, 50, 100]" showFirstLastButtons (page)="pageChanged($event)">
+        </mat-paginator>
+
+        <ng-template #noData>
+            <mat-card class="mat-elevation-z8">
+                No data found!
+            </mat-card>
+        </ng-template>
+    </mat-card>
+    <br>
+</div>

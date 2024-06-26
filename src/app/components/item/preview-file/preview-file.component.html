@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Preview</h1>
+<hr>
+<div mat-dialog-content style="text-align: center">
+    <img #imageViewer *ngIf="checkDataTypeIsImage()" src="" height="500px" width="100%">
+    <iframe #iframeRef *ngIf="checkDataTypeIsDocument()" [src]="docPreview | safeResourceUrl"
+        style="height:500px; width: 100%"></iframe>
+    <video #videoPlayer *ngIf="checkDataTypeIsHTML5SupportedMedia()" src="" type="video/mp4" controls
+        style="height:500px;" width="100%"></video>
+    <div *ngIf="!checkDataTypeIsHTML5SupportedMedia() && !checkDataTypeIsImage() && !checkDataTypeIsDocument()" style="text-align: center; font-size: xx-large;height:500px;display: flex;
+        align-items: center;
+        justify-content: center; ">
+        <span>
+            No
+            Preview Available</span>
+    </div>
+</div>
+<hr>
+<div style="display: flex;
+align-items: center;
+justify-content: center;">
+    <button (click)="onCloseClick()" cdkFocusInitial color="warn" mat-raised-button>Close</button>
+</div>

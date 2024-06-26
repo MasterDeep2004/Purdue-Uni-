@@ -1,0 +1,199 @@
+<!-- Desktop View -->
+<div *ngIf="getScreenWidth >= 650" class="container">
+    <mat-card class="mat-elevation-z8">
+
+        <!-- Slider/Alphabet list -->
+        <div style="width: 100%; text-align: center;">
+            <!-- toggle -->
+            <mat-slide-toggle color="primary" style="float: right;" [checked]="checked" matTooltip="Toggle View"
+                (change)="toggleView()"></mat-slide-toggle><br>
+            <br>
+            <!-- Slider -->
+            <mat-slider style="width: 95%;" *ngIf="checked" thumbLabel [displayWith]="formatLabel" [tickInterval]="1"
+                step="1" min="0" max="26" [(ngModel)]="selectedAlphabetIndex" (change)="onInputChange($event)">
+            </mat-slider>
+
+            <!-- Alphabet list -->
+            <div *ngIf="!checked" style="display: flex; flex-direction: row;"><span style="flex-grow: 1;"
+                    *ngFor="let letter of allAlphabets"><a href="javascript:void(0)"
+                        (click)="onAlphabetSelection($event)">{{letter}}</a></span>
+
+            </div>
+            <br>
+            <br>
+        </div>
+
+        <!-- Views -->
+
+        <!-- Table View -->
+        <div *ngIf="selectedView == 'table'">
+            <table mat-table [dataSource]="matDataSource" class="mat-elevation-z4">
+
+                <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- title Column -->
+                <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef> Title </th>
+                    <td mat-cell *matCellDef="let element" [innerHTML]="element.title"></td>
+                </ng-container>
+
+                <!-- preview Column -->
+                <ng-container matColumnDef="preview">
+                    <th mat-header-cell *matHeaderCellDef> Preview </th>
+                    <td mat-cell *matCellDef="let element" [innerHTML]="element.preview"></td>
+                </ng-container>
+
+                <!-- category Goto -->
+                <ng-container matColumnDef="goto">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element">
+                        <button matSuffix mat-icon-button aria-label="Goto" [routerLink]="['/',element.id]">
+                            <mat-icon>double_arrow</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToPage(row.id)"></tr>
+            </table>
+            <br>
+
+            <div *ngIf="loading">
+                <ngx-skeleton-loader count="4" appearance="line"></ngx-skeleton-loader>
+            </div>
+            <div *ngIf="!loading && matDataSource.data.length == 0" style="color: red;">No data found!</div>
+        </div>
+
+        <!-- Card View -->
+        <div *ngIf="selectedView == 'card'">
+            <div *ngIf="!loading" style="display: flex; flex-wrap: wrap;">
+                <div style="flex: 0 0 20%;" class="display-card"
+                    *ngFor="let item of matDataSource?.data?.slice(paginator.pageIndex * paginator.pageSize, (paginator.pageIndex + 1) * paginator.pageSize)">
+                    <div style="padding: 5%;">
+                        <mat-card *ngIf="item !== undefined" class="mat-elevation-z8"
+                            style="background-color: rgb(220, 220, 220); color: black;" [routerLink]="['/', item.id]">
+                            <mat-card-subtitle
+                                style="align-items: center; font-size: medium;  pointer-events: none; color: black ;">
+                                <div [innerHTML]="item.title"></div>
+                            </mat-card-subtitle>
+                            <hr style="pointer-events: none;">
+                            <mat-card-content style="pointer-events: none; font-style: italic;"
+                                [innerHTML]="getMediumDate(item.lastUpdateDateTime) + ' - ' + item.preview">
+                            </mat-card-content>
+                            <hr style="pointer-events: none;">
+                            <mat-card-actions style="margin: 1%;">
+                                <mat-chip-list>
+                                    <mat-chip *ngFor="let category of item.category" class="custom-chip"
+                                        (click)="onChipClick($event)">
+                                        {{category.name}}
+                                    </mat-chip>
+                                </mat-chip-list>
+                            </mat-card-actions>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="loading">
+                <ngx-skeleton-loader count="4" appearance="line"></ngx-skeleton-loader>
+            </div>
+            <div *ngIf="!loading && matDataSource.data.length == 0" style="color: red;">No data found!</div>
+        </div>
+
+        <!-- List View -->
+        <div *ngIf="selectedView == 'list'">
+            <div *ngIf="!loading" style="display: flex; flex-wrap: wrap;">
+                <mat-list role="list">
+                    <mat-list-item
+                        style="margin-left: 3%;color: gray; font-size: smaller; padding: 0px; text-decoration: underline;">
+                        About {{matDataSource.data.length | number}} results ({{counter/1000}}s)</mat-list-item>
+                    <br>
+                    <div *ngFor="let item of matDataSource.data.slice(paginator.pageIndex * paginator.pageSize, (paginator.pageIndex + 1) * paginator.pageSize)"
+                        style="margin-left: 3%; margin-bottom: 4%;">
+                        <mat-list-item role="listitem" *ngIf="item != undefined"
+                            style="width: 70%; font-family: acumin-pro, sans-serif;">
+                            <p mat-line style="color: rgb(104, 104, 104); margin-bottom: 1%; font-size: smaller;">
+                                {{getUrl(item.id)}}</p>
+                            <a mat-line [routerLink]="['/', item.id]"
+                                style="font-size: x-large; height: 100%; padding-bottom: 2%;"
+                                [innerHTML]="item.title"></a>
+                            <p mat-line style="color: gray; word-wrap: break-word !important;
+                        white-space: pre-wrap !important;"
+                                [innerHTML]="getMediumDate(item.lastUpdateDateTime) + ' - ' + item.preview">
+                            </p>
+                        </mat-list-item>
+                    </div>
+                </mat-list>
+            </div>
+
+            <div *ngIf="loading">
+                <ngx-skeleton-loader count="4" appearance="line"></ngx-skeleton-loader>
+            </div>
+            <div *ngIf="!loading && matDataSource.data.length == 0" style="color: red;">No data found!</div>
+        </div>
+
+        <!-- Common paginator -->
+        <mat-paginator [pageSizeOptions]="[10, 50, 100]" showFirstLastButtons (page)="pageChanged($event)">
+        </mat-paginator>
+
+    </mat-card>
+    br
+</div>
+
+<!-- Mobile View -->
+<div *ngIf="getScreenWidth < 650" class="container">
+    <mat-card class="mat-elevation-z8">
+
+        <!-- Alphabet list -->
+        <div style="width:100%; overflow: auto;"><span *ngFor="let letter of allAlphabets"><a href="javascript:void(0)"
+                    (click)="onAlphabetSelection($event)">{{letter}}</a> &nbsp; &nbsp;</span>
+
+        </div>
+
+        <br>
+
+        <!-- Table View -->
+        <table mat-table [dataSource]="matDataSource" class="mat-elevation-z4">
+
+            <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+            <!-- title Column -->
+            <ng-container matColumnDef="titlemob">
+                <th mat-header-cell *matHeaderCellDef> Title </th>
+                <td mat-cell *matCellDef="let element" [innerHTML]="element.title"></td>
+            </ng-container>
+
+            <!-- preview Column -->
+            <ng-container matColumnDef="previewmob">
+                <th mat-header-cell *matHeaderCellDef> Preview </th>
+                <td mat-cell *matCellDef="let element" [innerHTML]="element.preview"></td>
+            </ng-container>
+
+            <!-- category Goto -->
+            <ng-container matColumnDef="gotomob">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                    <button matSuffix mat-icon-button aria-label="Goto" [routerLink]="['/',element.id]">
+                        <mat-icon>double_arrow</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="navigateToPage(row.id)"></tr>
+        </table>
+
+        <br>
+
+        <div *ngIf="loading">
+            <ngx-skeleton-loader count="4" appearance="line"></ngx-skeleton-loader>
+        </div>
+        <div *ngIf="!loading && matDataSource.data.length == 0" style="color: red;">No data found!</div>
+
+        <mat-paginator [pageSizeOptions]="[10, 50, 100]" showFirstLastButtons (page)="pageChanged($event)">
+        </mat-paginator>
+
+    </mat-card>
+    <br>
+</div>
